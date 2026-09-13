@@ -95,6 +95,10 @@ for model_name, model in models.items():
     model.fit(X_train, y_train)
 
     val_prob = model.predict_proba(X_val)[:, 1]
+    val_pr_auc = average_precision_score(
+    y_val,
+    val_prob
+)
 
     threshold_results = []
 
@@ -167,6 +171,10 @@ for model_name, model in models.items():
         f"Validation F1: "
         f"{best_row['f1']:.3f}"
     )
+    print(
+    f"Validation PR-AUC: "
+    f"{val_pr_auc:.3f}"
+)
 
     # --------------------------------------------------
     # Evaluate chosen threshold ONCE on final test set
@@ -253,4 +261,8 @@ for model_name, model in models.items():
         mlflow.log_metric(
             "test_pr_auc",
             test_pr_auc
+        )
+        mlflow.log_metric(
+            "validation_pr_auc",
+            val_pr_auc
         )
