@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Literal
 
 import mlflow
@@ -17,6 +19,8 @@ REGISTERED_MODEL_URI = (
 )
 
 SELECTED_THRESHOLD = 0.07
+
+LOG_PATH = Path("logs/predictions.csv")
 
 mlflow.set_tracking_uri("sqlite:///mlflow.db")
 
@@ -58,6 +62,43 @@ class PredictionRequest(BaseModel):
 
 
 # ---------------------------------------------------------
+# Prediction logging
+# ---------------------------------------------------------
+
+def log_prediction(
+    request: PredictionRequest,
+    failure_probability: float,
+    predicted_failure: int,
+):
+
+    LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    log_row = pd.DataFrame(
+        [
+            {
+                "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+                "machine_type": request.machine_type,
+                "air_temperature": request.air_temperature,
+                "process_temperature": request.process_temperature,
+                "rotational_speed": request.rotational_speed,
+                "torque": request.torque,
+                "tool_wear": request.tool_wear,
+                "failure_probability": failure_probability,
+                "predicted_failure": predicted_failure,
+                "decision_threshold": SELECTED_THRESHOLD,
+            }
+        ]
+    )
+
+    log_row.to_csv(
+        LOG_PATH,
+        mode="a",
+        header=not LOG_PATH.exists(),
+        index=False,
+    )
+
+
+# ---------------------------------------------------------
 # Health endpoint
 # ---------------------------------------------------------
 
@@ -78,14 +119,10 @@ def root():
 @app.post("/predict")
 def predict(request: PredictionRequest):
 
-    # Convert machine type to the same one-hot representation
-    # used during model training.
     type_h = 1 if request.machine_type == "H" else 0
     type_l = 1 if request.machine_type == "L" else 0
     type_m = 1 if request.machine_type == "M" else 0
 
-    # Create the model input using the exact feature names
-    # and order used during training.
     model_input = pd.DataFrame(
         [
             {
@@ -101,13 +138,18 @@ def predict(request: PredictionRequest):
         ]
     )
 
-    # Probability that Machine failure = 1
     failure_probability = float(
         model.predict_proba(model_input)[0, 1]
     )
 
     predicted_failure = int(
         failure_probability >= SELECTED_THRESHOLD
+    )
+
+    log_prediction(
+        request=request,
+        failure_probability=failure_probability,
+        predicted_failure=predicted_failure,
     )
 
     return {
