@@ -1,4 +1,4 @@
-# Experiment Tracking Conceptual Design — Team Handoff Notes
+# Experiment Tracking Conceptual Design
 
 ## Experiment Objective
 
@@ -119,19 +119,3 @@ Both Random Forest and Gradient Boosting satisfied the minimum validation recall
 The selected Gradient Boosting threshold is 0.07.
 
 The final test set was not used to change the selected model or threshold.
-
-## Suggested Screenshots for Assignment
-
-1. MLflow experiment overview showing tracked runs.
-2. Four baseline models compared side by side.
-3. Detailed Gradient Boosting baseline run.
-4. Random Forest versus Gradient Boosting threshold comparison.
-5. Threshold comparison showing validation PR-AUC.
-
-Suggested caption for the baseline comparison:
-
-"Baseline model comparison in MLflow. Gradient Boosting achieved the highest precision, F1, and PR-AUC, while Decision Tree achieved the highest recall. The lower recall of Gradient Boosting at the default classification threshold motivated subsequent threshold tuning."
-
-Suggested caption for the threshold comparison:
-
-"Threshold tuning compared Random Forest and Gradient Boosting under a minimum validation recall requirement of 0.80. Gradient Boosting achieved higher validation PR-AUC and was selected as the preferred candidate."
