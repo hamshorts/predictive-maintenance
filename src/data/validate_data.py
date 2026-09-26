@@ -39,11 +39,12 @@ if not DATA_PATH.exists():
     print(f"ERROR: Could not find {DATA_PATH}")
     sys.exit(1)
 
-df = pd.read_csv(DATA_PATH)
 if not DATA_PATH.exists():
     raise FileNotFoundError(
-        "Input data file not found: {DATA_PATH}"
-    )
+        f"Input data file not found: {DATA_PATH}")
+    
+df = pd.read_csv(DATA_PATH)
+
 # Check schema
 if list(df.columns) != EXPECTED_COLUMNS:
     errors.append("Dataset columns do not match the expected schema.")
