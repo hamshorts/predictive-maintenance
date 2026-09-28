@@ -1,6 +1,6 @@
 # Predictive Maintenance ML System
 
-## Project Description
+## Project Description 
 
 This project develops a machine learning system for predictive maintenance using the UCI AI4I 2020 Predictive Maintenance dataset.
 
