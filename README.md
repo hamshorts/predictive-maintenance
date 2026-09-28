@@ -76,7 +76,10 @@ Then open:
 ```text
 http://127.0.0.1:5000
 ```
-
+## Collaboration
+This project uses GitHub Issues, branches, pull 
+requests, and peer review to support collaborative development and maintain a 
+clear history of project changes.
 ## Contributors
 
 - Aryssa Lane
