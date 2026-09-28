@@ -36,8 +36,9 @@ errors = []
 
 # Check that the file exists
 if not DATA_PATH.exists():
-    print(f"ERROR: Could not find {DATA_PATH}")
-    sys.exit(1)
+    raise FileNotFoundError(
+        f"Input data file not found: {DATA_PATH}"
+    )
 
 df = pd.read_csv(DATA_PATH)
 
